@@ -114,6 +114,7 @@
     bottles-unwrapped
     wine
     v2rayn
+    wine64Packages.stagingFull
 
     docker-compose
     opencode

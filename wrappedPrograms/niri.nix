@@ -116,31 +116,31 @@
           "Mod+Shift+0".move-column-to-workspace = "w9";
           
           "XF86AudioMute".spawn-sh = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-	  "XF86AudioLowerVolume".spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
- 	  "XF86AudioRaiseVolume".spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
-	  "XF86MonBrightnessDown".spawn-sh = "wpctl brightnessctl set 5%-";
-	  "XF86MonBrightnessUp".spawn-sh = "wpctl brightnessctl set 5%+";
-	  #"XF86TouchpadToggle"
-	  "XF86AudioMicMute".spawn-sh = " wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
-	  #"XF86Laucnh1"
+	        "XF86AudioLowerVolume".spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
+ 	        "XF86AudioRaiseVolume".spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
+	        "XF86MonBrightnessDown".spawn-sh = "wpctl brightnessctl set 5%-";
+	        "XF86MonBrightnessUp".spawn-sh = "wpctl brightnessctl set 5%+";
+	        #"XF86TouchpadToggle"
+	        "XF86AudioMicMute".spawn-sh = " wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
+	        #"XF86Laucnh1"
 	  
 	  
 		
         };
-          workspaces = let
-            settings = {layout.gaps = 5;};
-          in {
-            "w0" = settings;
-            "w1" = settings;
-            "w2" = settings;
-            "w3" = settings;
-            "w4" = settings;
-            "w5" = settings;
-            "w6" = settings;
-            "w7" = settings;
-            "w8" = settings;
-            "w9" = settings;
-          };
+        workspaces = let
+          settings = {layout.gaps = 5;};
+        in {
+          "w0" = settings;
+          "w1" = settings;
+          "w2" = settings;
+          "w3" = settings;
+          "w4" = settings;
+          "w5" = settings;
+          "w6" = settings;
+          "w7" = settings;
+          "w8" = settings;
+          "w9" = settings;
+        };
       };
     };
   };
