@@ -5,6 +5,7 @@
       self.nixosModules.laptopHardware
       self.nixosModules.niri
       self.nixosModules.ly
+      ./happ-nixos/happ-module.nix
     ];
 
 
@@ -61,6 +62,7 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  services.happ.enable = true;
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -109,6 +111,8 @@
     distrobox
     gcc
     winboat
+    bottles-unwrapped
+    wine
     v2rayn
 
     docker-compose
