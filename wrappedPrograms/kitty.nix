@@ -15,6 +15,8 @@
         shell_integration = "enabled";
 
         cursor_trail = 3;
+	cursor_shape = "block";
+
 
         # map = [
         #   "alt+1 goto_tab 1"
