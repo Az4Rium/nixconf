@@ -3,12 +3,14 @@
     imports =
     [
       self.nixosModules.laptopHardware
+      self.nixosModules.stylix
       self.nixosModules.niri
       self.nixosModules.ly
     ];
 
-
+  
   boot.loader = {
+    systemd-boot.enable = false;
     grub = {
       enable = true;
       efiSupport = true;
@@ -88,6 +90,7 @@
   programs.steam.enable = true;
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [ "electron-40.10.5" ];
 
   environment.systemPackages = with pkgs; [
     vim
@@ -105,6 +108,7 @@
     wine64Packages.stagingFull
     btop
     htop
+    lutris
     file-roller
 
     docker-compose
@@ -114,13 +118,16 @@
     busybox
     cifs-utils
     prismlauncher
+
+    obsidian
+    ollama
+    qbittorrent
   ];
   programs.throne = {
 	enable = true;
 	tunMode.enable = true;
   };
   virtualisation.docker.enable = true;
-
 
 
 

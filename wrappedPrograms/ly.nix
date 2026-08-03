@@ -1,32 +1,15 @@
 { self, inputs, lib, ... }: {
-  flake.nixosModules.ly = { ... }: {
+  flake.nixosModules.ly = { config, lib, ... }: {
     services.displayManager.ly = {
       enable = true;
-      settings = {
-        bg = "0x00${self.themeNoHash.bg}";
-        fg = "0x00${self.themeNoHash.fg}";
-        error_fg = "0x01${self.themeNoHash.error}";
-        error_bg = "0x00${self.themeNoHash.bg}";
-        border_fg = "0x00${self.themeNoHash.accent}";
-      };
-    };
-  };
-
-  perSystem = { pkgs, ... }: let
-    configIni = pkgs.writeText "ly-config.ini" ''
-      [ly]
-      bg = 0x00${self.themeNoHash.bg}
-      fg = 0x00${self.themeNoHash.fg}
-      error_fg = 0x01${self.themeNoHash.error}
-      error_bg = 0x00${self.themeNoHash.bg}
-      border_fg = 0x00${self.themeNoHash.accent}
-    '';
-  in {
-    packages.ly = inputs.wrappers.lib.wrapPackage {
-      inherit pkgs;
-      package = pkgs.ly;
-      flags = {
-        "-c" = "${configIni}";
+      settings = let
+        colors = config.lib.stylix.colors;
+      in {
+        bg = "0x00${colors.base00}";
+        fg = "0x00${colors.base05}";
+        error_fg = "0x01${colors.base08}";
+        error_bg = "0x00${colors.base00}";
+        border_fg = "0x00${colors.base0F}";
       };
     };
   };
