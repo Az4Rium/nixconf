@@ -54,10 +54,10 @@
 
           binds = {
             "Mod+Return".spawn-sh = kittyExe;
-            "Mod+M".spawn-sh = "${noctaliaExe} ipc call sessionMenu toggle";
+            "Mod+M".spawn-sh = "qs ipc call ui togglePowerMenu";
 
             "Mod+Q".close-window = {};
-            "Mod+Space".spawn-sh = "${noctaliaExe} ipc call launcher toggle";
+            "Mod+Space".spawn-sh = "qs ipc call ui toggleLauncher";
             "Mod+F".maximize-column = {};
             "Mod+G".fullscreen-window = {};
             "Mod+Shift+F".toggle-window-floating = {};
@@ -132,6 +132,5 @@
         };
       };
     };
-    environment.systemPackages = [ pkgs.bibata-cursors ];
   };
 }
