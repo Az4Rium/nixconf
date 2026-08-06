@@ -7,7 +7,7 @@
     nixpkgs.config.permittedInsecurePackages = [ "electron-40.10.5" ];
 
     environment.systemPackages = with pkgs; [
-      vim
+      self.packages.${pkgs.stdenv.hostPlatform.system}.neovim 
       wget
       curl
       git
@@ -37,5 +37,6 @@
       ollama
       qbittorrent
     ];
+    environment.variables.EDITOR = lib.getExe self.packages.${pkgs.stdenv.hostPlatform.system}.neovim;
   };
 }
