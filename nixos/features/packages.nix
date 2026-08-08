@@ -11,6 +11,7 @@
       wget
       curl
       git
+      gh
       vscodium
       (python3.withPackages(ps: [ps.tkinter]))
       distrobox

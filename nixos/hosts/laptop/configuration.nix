@@ -17,7 +17,6 @@
       self.nixosModules.users
       self.nixosModules.nix
       self.nixosModules.packages
-      self.nixosModules.throne
       self.nixosModules.docker
       self.nixosModules.firewall
       self.nixosModules.stylix
