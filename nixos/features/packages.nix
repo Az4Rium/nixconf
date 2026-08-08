@@ -1,5 +1,5 @@
 { self, inputs, ... }: {
-  flake.nixosModules.packages = { pkgs, lib, ... }: {
+  flake.nixosModules.packages = { config, pkgs, lib, ... }: {
     programs.firefox.enable = true;
     programs.steam.enable = true;
 
@@ -16,14 +16,8 @@
       (python3.withPackages(ps: [ps.tkinter]))
       distrobox
       gcc
-      winboat
-      bottles-unwrapped
-      wine
-      v2rayn
-      wine64Packages.stagingFull
       btop
       htop
-      lutris
       file-roller
 
       docker-compose
@@ -32,12 +26,11 @@
       lan-mouse
       busybox
       cifs-utils
-      prismlauncher
 
       obsidian
       ollama
       qbittorrent
-    ];
+    ] ++ config.preferences.extraPackages;
     environment.variables.EDITOR = lib.getExe self.packages.${pkgs.stdenv.hostPlatform.system}.neovim;
   };
 }

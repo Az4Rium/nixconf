@@ -1,12 +1,9 @@
 { self, inputs, ... }: {
-  flake.nixosModules.desktop = { pkgs, lib, ... }: {
+  flake.nixosModules.desktop = { config, pkgs, lib, ... }: {
     services.xserver.enable = true;
 
     services.desktopManager.gnome.enable = true;
 
-    services.xserver.xkb = {
-      layout = "us";
-      variant = "";
-    };
+    services.xserver.xkb = config.preferences.keymap;
   };
 }

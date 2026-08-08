@@ -1,23 +1,24 @@
 { self, inputs, ... }: {
-  flake.nixosModules.locale = { pkgs, lib, ... }: {
-    time.timeZone = "Europe/Moscow";
+  flake.nixosModules.locale = { config, pkgs, lib, ... }: {
+    time.timeZone = lib.mkDefault config.preferences.timeZone;
 
-    i18n.defaultLocale = "en_US.UTF-8";
+    i18n.defaultLocale = lib.mkDefault config.preferences.locale.defaultLocale;
     i18n.inputMethod = {
       enable = true;
 
     };
 
-    i18n.extraLocaleSettings = {
-      LC_ADDRESS = "ru_RU.UTF-8";
-      LC_IDENTIFICATION = "ru_RU.UTF-8";
-      LC_MEASUREMENT = "ru_RU.UTF-8";
-      LC_MONETARY = "ru_RU.UTF-8";
-      LC_NAME = "ru_RU.UTF-8";
-      LC_NUMERIC = "ru_RU.UTF-8";
-      LC_PAPER = "ru_RU.UTF-8";
-      LC_TELEPHONE = "ru_RU.UTF-8";
-      LC_TIME = "ru_RU.UTF-8";
-    };
+    i18n.extraLocaleSettings =
+      lib.genAttrs [
+        "LC_ADDRESS"
+        "LC_IDENTIFICATION"
+        "LC_MEASUREMENT"
+        "LC_MONETARY"
+        "LC_NAME"
+        "LC_NUMERIC"
+        "LC_PAPER"
+        "LC_TELEPHONE"
+        "LC_TIME"
+      ] (_: config.preferences.locale.extra);
   };
 }

@@ -5,8 +5,9 @@
     ];
   };
 
-  flake.nixosModules.hostLaptop = {
+  flake.nixosModules.hostLaptop = { pkgs, ... }: {
     imports = [
+      self.nixosModules.base
       self.nixosModules.boot
       self.nixosModules.networking
       self.nixosModules.locale
@@ -24,6 +25,20 @@
       self.nixosModules.ly
       self.nixosModules.laptopHardware
     ];
+
+    preferences = {
+      hostName = "laptop";
+      extraPackages = with pkgs; [
+        winboat
+        bottles-unwrapped
+        wine
+        v2rayn
+        wine64Packages.stagingFull
+        lutris
+        prismlauncher
+      ];
+    };
+
     system.stateVersion = "25.11";
   };
 }

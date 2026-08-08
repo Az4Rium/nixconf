@@ -1,8 +1,8 @@
 { self, inputs, ... }: {
-  flake.nixosModules.users = { pkgs, lib, ... }: {
-    users.users.alexander = {
+  flake.nixosModules.users = { config, pkgs, lib, ... }: {
+    users.users.${config.preferences.user.name} = {
       isNormalUser = true;
-      description = "Alexander";
+      description = config.preferences.user.description;
       extraGroups = [ "networkmanager" "wheel" "docker" ];
       packages = with pkgs; [
       ];

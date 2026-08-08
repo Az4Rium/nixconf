@@ -1,10 +1,22 @@
 # NixOS Configuration
 
-A flake-based NixOS configuration for a single-host setup (`laptop`, AMD, GNOME on X11),
-built around [flake-parts](https://github.com/hercules-ci/flake-parts), the
+A flake-based NixOS configuration (`laptop`, AMD, GNOME on X11) built around
+[flake-parts](https://github.com/hercules-ci/flake-parts), the
 [wrappers](https://github.com/Lassulus/wrappers) /
 [wrapper-modules](https://github.com/BirdeeHub/nix-wrapper-modules) framework for declarative
 program configuration, and [stylix](https://github.com/danth/stylix) for theming.
+
+Machine-specific settings live in `nixos/hosts/`, defaults in `nixos/base/`
+(`preferences.*`), so the config can be deployed to a new machine by dropping in a host
+directory — see **[docs/deployment.md](docs/deployment.md)**.
+
+## Documentation
+
+- [docs/structure.md](docs/structure.md) — flake mechanics, auto-import, `parts.nix`, `theme.nix`
+- [docs/deployment.md](docs/deployment.md) — installing on a new machine
+- [docs/features.md](docs/features.md) — every NixOS module and its defaults
+- [docs/wrapped-programs.md](docs/wrapped-programs.md) — fish, kitty, ly, niri
+- [docs/neovim.md](docs/neovim.md) — neovim build, LSP, plugins, keymaps
 
 ## Quick start
 
@@ -34,11 +46,25 @@ nixconf/
 ├── flake.lock
 ├── parts.nix                      # flake-parts bootstrap, supported systems
 ├── theme.nix                      # shared 16-color palette (base16-ish)
+├── README.md
+├── docs/                          # full documentation (markdown, never auto-imported)
+│   ├── structure.md               #   flake mechanics & auto-import
+│   ├── deployment.md              #   deploying on a new machine
+│   ├── features.md                #   every NixOS module + preferences
+│   ├── wrapped-programs.md        #   fish/kitty/ly/niri
+│   └── neovim.md                  #   neovim build & lua config
 ├── nixos/
+│   ├── base/                      # default preferences (merged into `flake.nixosModules.base`)
+│   │   ├── user.nix               #   preferences.user.{name,description}
+│   │   ├── hostname.nix           #   preferences.hostName
+│   │   ├── keymap.nix             #   preferences.keymap.{layout,variant}
+│   │   ├── locale.nix             #   preferences.timeZone, preferences.locale.*
+│   │   ├── autostart.nix          #   preferences.autostart
+│   │   └── extraPackages.nix      #   preferences.extraPackages
 │   ├── features/                  # reusable NixOS modules (each declares flake.nixosModules.*)
 │   └── hosts/
-│       └── laptop/
-│           ├── configuration.nix  # wires the feature modules together
+│       └── laptop/                # one directory per machine
+│           ├── configuration.nix  # imports features + sets preferences.* overrides
 │           └── hardware.nix       # disk layout, kernel modules, microcode
 └── wrappedPrograms/               # declarative program configs (perSystem packages + modules)
     ├── fish.nix                   # fish + zoxide prompt
@@ -60,6 +86,18 @@ files whose name starts with `_`. Each file returns a flake-parts module declari
 - `flake.modules.<namespace>.<name>` — wrapper-modules used by wrapped programs
 - `perSystem.packages.<name>` — standalone wrapped packages
 - `flake.<attr>` — plain flake outputs (e.g. `flake.theme`)
+
+Files declaring the **same** `flake.nixosModules.<name>` are merged — that is how the
+`base` module is assembled from all files in `nixos/base/`.
+
+## Preferences & portability
+
+`nixos/base/` defines defaults (`preferences.user`, `preferences.hostName`,
+`preferences.keymap`, `preferences.timeZone`/`preferences.locale`, `preferences.autostart`,
+`preferences.extraPackages`) that features consume via `config.preferences.*`. A host
+overrides them in its own `configuration.nix`, so adding a machine means adding a host
+directory — no edits to shared modules. See **docs/features.md** (option table) and
+**docs/deployment.md** (new-host walkthrough).
 
 ## Inputs
 
@@ -84,29 +122,32 @@ files whose name starts with `_`. Each file returns a flake-parts module declari
 
 | Module        | Summary                                                              |
 | ------------- | -------------------------------------------------------------------- |
+| `base`        | defaults for user/hostname/keymap/locale/packages (see above)        |
 | `boot`        | GRUB (UEFI removable), testing kernel, `userns_clone` sysctl          |
-| `networking`  | NetworkManager (wifi powersave off), Bluetooth                        |
-| `locale`      | `Europe/Moscow`, `en_US.UTF-8` + `ru_RU` extra locales                |
-| `desktop`     | X11 + GNOME                                                          |
+| `networking`  | NetworkManager (wifi powersave off), Bluetooth, hostname from prefs   |
+| `locale`      | timezone/locale from prefs (`Europe/Moscow`, `en_US` + `ru_RU`)       |
+| `desktop`     | X11 + GNOME, keymap from prefs                                       |
 | `printing`    | CUPS                                                                 |
 | `audio`       | PipeWire (+ ALSA 32bit, PulseAudio compat, rtkit)                     |
 | `graphics`    | AMD (`amdgpu`) with 32-bit support                                   |
-| `users`       | user `alexander` (networkmanager, wheel, docker)                      |
+| `users`       | primary user from prefs (networkmanager, wheel, docker)               |
 | `nix`         | flakes + `nix-command` experimental features                         |
-| `packages`    | firefox, steam, allowed unfree, system packages, `EDITOR=neovim`      |
-| `throne`      | Throne proxy (`tunMode`)                                            |
+| `packages`    | firefox, steam, allowed unfree, base packages + `preferences.extraPackages`, `EDITOR=neovim` |
 | `docker`      | Docker daemon                                                       |
 | `firewall`    | disabled                                                            |
 | `stylix`      | ayu-dark scheme, JetBrainsMono Nerd Font, Bibata cursor              |
-| `laptopHardware` | NVMe/EFI mounts, swap, AMD microcode                              |
+| `laptopHardware` | NVMe/EFI mounts, swap, AMD microcode (per-host)                   |
 
 Host `laptop` (`nixos/hosts/laptop/configuration.nix`) imports all of the above plus
-`niri` and `ly`, with `system.stateVersion = "25.11"`.
+`niri` and `ly`, sets its `preferences` (hostname, wine/gaming packages) and
+`system.stateVersion = "25.11"`.
+
+See **[docs/features.md](docs/features.md)** for a full write-up of every module.
 
 ## Wrapped programs (`wrappedPrograms/`)
 
 Configuration is declared in Nix (typed via wrapper-modules) and the resulting binaries are
-exposed as flake packages.
+exposed as flake packages. Details in **[docs/wrapped-programs.md](docs/wrapped-programs.md)**.
 
 | Program | Package(s)         | Highlights                                                        |
 | ------- | ------------------ | ----------------------------------------------------------------- |
