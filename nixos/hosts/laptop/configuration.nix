@@ -22,6 +22,7 @@
       self.nixosModules.firewall
       self.nixosModules.stylix
       self.nixosModules.niri
+      self.nixosModules.star-citizen
       self.nixosModules.ly
       self.nixosModules.laptopHardware
     ];

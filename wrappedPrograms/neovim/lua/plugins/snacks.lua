@@ -33,6 +33,7 @@ return {
             words = { enabled = true },
             image = {},
             quickfile = { enabled = true },
+            terminal = { enabled = true }
         })
     end,
     keys = {
@@ -42,5 +43,7 @@ return {
         { "<leader>fg", function() Snacks.picker.grep() end,                         desc = "grep" },
         { "gr",         function() Snacks.picker.lsp_references() end,               nowait = true,             desc = "References" },
         { "gd",         function() Snacks.picker.lsp_definitions() end,              desc = "Goto Definition" },
+        { "<leader>tt", function() require() Snacks.terminal.toggle() end, desc = "Toggle Terminal"},
+        { "<leader>tf", function() Snacks.terminal() end, desc = "New Terminal"}
     }
 }

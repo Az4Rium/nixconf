@@ -82,6 +82,7 @@
           pkgs.vimPlugins.nvim-autopairs
           pkgs.vimPlugins.fastaction-nvim
           pkgs.vimPlugins.neo-tree-nvim
+          pkgs.vimPlugins.render-markdown-nvim
         ];
       };
     };

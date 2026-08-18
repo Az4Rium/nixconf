@@ -15,7 +15,11 @@
       };
     };
     boot.loader.efi.canTouchEfiVariables = false;
-    boot.kernel.sysctl."kernel.unprivileged_userns_clone" = 1;
+    boot.kernel.sysctl = {
+      "kernel.unprivileged_userns_clone" = 1;
+      "vm.max_map_count" = 16777216;
+      "fs.file-max" = 524288;
+    };
     boot.kernelPackages = pkgs.linuxPackages_testing;
   };
 }

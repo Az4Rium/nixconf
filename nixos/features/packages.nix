@@ -19,6 +19,7 @@
       btop
       htop
       file-roller
+      lug-helper
 
       docker-compose
       opencode
