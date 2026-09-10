@@ -20,6 +20,7 @@
       htop
       file-roller
       lug-helper
+      gnome-tweaks
 
       docker-compose
       opencode
