@@ -24,6 +24,7 @@
   networking.hostName = "nixos"; # Define your hostname.
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.powersave = false;
+  hardware.enableRedistributableFirmware = true;
   hardware.bluetooth.enable = true;
 
   # Set your time zone.
@@ -51,7 +52,7 @@
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.desktopManager.gnome.enable = true;
+  # services.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -104,29 +105,14 @@
     wget
     curl
     git
-    vscodium
-    (python3.withPackages(ps: [ps.tkinter]))
-    distrobox
     gcc
-    winboat
     v2rayn
 
-    docker-compose
-    opencode
-    libreoffice-fresh
-    lan-mouse
+    steam
     busybox
     cifs-utils
     prismlauncher
   ];
-  programs.throne = {
-	enable = true;
-	tunMode.enable = true;
-  };
-  virtualisation.docker.enable = true;
-
-
-
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
