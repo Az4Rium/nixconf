@@ -14,7 +14,7 @@
       imports = [ self.wrappersModules.niri ];
       terminal = lib.getExe self'.packages.terminal;
       env = {
-        EDITOR = lib.getExe self'.packages.neovim;
+        EDITOR = lib.getExe pkgs.neovim;
       };
     };
 

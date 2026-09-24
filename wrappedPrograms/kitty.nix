@@ -1,9 +1,18 @@
 {self, inputs, ...}: {
-  perSystem = {pkgs,self', lib, ...}: {
-    packages.myKitty = inputs.wrapper-modules.wrappers.kitty.wrap {
-      inherit pkgs;
+  flake.wrappersModules.kitty = {
+    config,
+    lib,
+    ...
+  }: {
+    options.shell = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+    };
+
+    config = {
+      args = lib.mkAfter (lib.optionals (config.shell != "") [config.shell]);
+
       settings = {
-        shell = "${pkgs.lib.getExe self'.packages.fish}";
         enable_audio_bell = "no";
 
         font_size = 15;
@@ -28,37 +37,46 @@
         #   "alt+9 goto_tab 9"
         #   "ctrl+shift+w close_tab"
         #   "ctrl+t new_tab_with_cwd"
-        #   "ctrl+shift+t new_tab"   
+        #   "ctrl+shift+t new_tab"
         # ];
 
-        background = self.theme.bg;
-        foreground = self.theme.fg;
+        background = self.theme.base00;
+        foreground = self.theme.base07;
 
-        cursor = self.theme.fg_light;
-        selection_foreground = self.theme.fg;
-        selection_background = self.theme.selection;
-        
-        active_tab_foreground = self.theme.accent;
-        active_tab_background = self.theme.bg;
-        inactive_tab_background = self.theme.bg_dark;
+        cursor = self.theme.base07;
 
-        color0  = self.theme.base00;
-        color1  = self.theme.base01;
-        color2  = self.theme.base02;
-        color3  = self.theme.base03;
-        color4  = self.theme.base04;
-        color5  = self.theme.base05;
-        color6  = self.theme.base06;
-        color7  = self.theme.base07;
-        color8  = self.theme.base08;
-        color9  = self.theme.base09;
-        color10 = self.theme.base10;
-        color11 = self.theme.base11;
-        color12 = self.theme.base12;
-        color13 = self.theme.base13;
-        color14 = self.theme.base14;
-        color15 = self.theme.base15;
+        selection_foreground = self.theme.base02;
+        selection_background = self.theme.base01;
+
+        active_tab_foreground = self.theme.base0B;
+        active_tab_background = self.theme.base03;
+        inactive_tab_background = self.theme.base01;
+
+        color0 = self.theme.base00;
+        color8 = self.theme.base02;
+        color1 = self.theme.base08;
+        color9 = self.theme.base08;
+        color2 = self.theme.base0B;
+        color10 = self.theme.base0B;
+        color3 = self.theme.base0A;
+        color11 = self.theme.base0A;
+        color4 = self.theme.base0D;
+        color12 = self.theme.base0D;
+        color5 = self.theme.base0E;
+        color13 = self.theme.base0E;
+        color6 = self.theme.base0C;
+        color14 = self.theme.base0C;
+        color7 = self.theme.base03;
+        color15 = self.theme.base03;
       };
     };
+  };
+
+  perSystem = {pkgs, ...}: {
+    packages.kitty =
+      (inputs.wrappers.wrapperModules.kitty.apply {
+        inherit pkgs;
+        imports = [self.wrappersModules.kitty];
+      }).wrapper;
   };
 }

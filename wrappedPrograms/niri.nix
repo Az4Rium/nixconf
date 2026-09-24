@@ -4,18 +4,27 @@
        enable = true;
        package = self.packages.${pkgs.stdenv.hostPlatform.system}.myNiri;
      };
-      environment.systemPackages = [ pkgs.bibata-cursors ];
+     environment.systemPackages = [ pkgs.bibata-cursors ];
    };
 
-  perSystem = { pkgs, lib, self', config, ... }: {
-    packages.myNiri = inputs.wrapper-modules.wrappers.niri.wrap {
-      inherit pkgs;
-      settings = let 
-      	noctaliaExe = lib.getExe self'.packages.myNoctalia;
+  flake.wrappersModules.niri = {
+    config,
+    lib,
+    pkgs,
+    ...
+  }: {
+    options.terminal = lib.mkOption {
+      type = lib.types.str;
+      default = "kitty";
+    };
+
+    config = {
+      settings = let
+        noctaliaExe = lib.getExe self.packages.${pkgs.stdenv.hostPlatform.system}.myNoctalia;
       in {
-         spawn-at-startup = [
-           (lib.getExe self'.packages.myNoctalia)
-         ];
+        spawn-at-startup = [
+          noctaliaExe
+        ];
 
         xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
         prefer-no-csd = {};
@@ -49,8 +58,8 @@
           gaps = 5;
            focus-ring = {
              width = 2;
-             active-color = self.theme.accent;
-             inactive-color = self.theme.selection;
+             active-color = "#${self.themeNoHash.base09}";
+             inactive-color = "#${self.themeNoHash.base01}";
            };
 
         };
@@ -60,11 +69,11 @@
         };
 
         binds = {
-          "Mod+Return".spawn-sh = lib.getExe self'.packages.myKitty;
-          "Mod+M".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call sessionMenu toggle";
+          "Mod+Return".spawn = config.terminal;
+          "Mod+M".spawn-sh = "${noctaliaExe} ipc call sessionMenu toggle";
 
           "Mod+Q".close-window = {};
-          "Mod+Space".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call launcher toggle";
+          "Mod+Space".spawn-sh = "${noctaliaExe} ipc call launcher toggle";
           "Mod+F".maximize-column = {};
           "Mod+G".fullscreen-window = {};
           "Mod+Shift+F".toggle-window-floating = {};
@@ -114,34 +123,40 @@
           "Mod+Shift+8".move-column-to-workspace = "w7";
           "Mod+Shift+9".move-column-to-workspace = "w8";
           "Mod+Shift+0".move-column-to-workspace = "w9";
-          
+
           "XF86AudioMute".spawn-sh = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-	  "XF86AudioLowerVolume".spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
- 	  "XF86AudioRaiseVolume".spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
-	  "XF86MonBrightnessDown".spawn-sh = "wpctl brightnessctl set 5%-";
-	  "XF86MonBrightnessUp".spawn-sh = "wpctl brightnessctl set 5%+";
-	  #"XF86TouchpadToggle"
-	  "XF86AudioMicMute".spawn-sh = " wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
-	  #"XF86Laucnh1"
-	  
-	  
-		
+          "XF86AudioLowerVolume".spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
+          "XF86AudioRaiseVolume".spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
+          "XF86MonBrightnessDown".spawn-sh = "wpctl brightnessctl set 5%-";
+          "XF86MonBrightnessUp".spawn-sh = "wpctl brightnessctl set 5%+";
+          #"XF86TouchpadToggle"
+          "XF86AudioMicMute".spawn-sh = " wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
+          #"XF86Laucnh1"
         };
-          workspaces = let
-            settings = {layout.gaps = 5;};
-          in {
-            "w0" = settings;
-            "w1" = settings;
-            "w2" = settings;
-            "w3" = settings;
-            "w4" = settings;
-            "w5" = settings;
-            "w6" = settings;
-            "w7" = settings;
-            "w8" = settings;
-            "w9" = settings;
-          };
+
+        workspaces = let
+          settings = {layout.gaps = 5;};
+        in {
+          "w0" = settings;
+          "w1" = settings;
+          "w2" = settings;
+          "w3" = settings;
+          "w4" = settings;
+          "w5" = settings;
+          "w6" = settings;
+          "w7" = settings;
+          "w8" = settings;
+          "w9" = settings;
+        };
       };
+    };
+  };
+
+  perSystem = { pkgs, lib, self', ... }: {
+    packages.myNiri = inputs.wrapper-modules.wrappers.niri.wrap {
+      inherit pkgs;
+      imports = [self.wrappersModules.niri];
+      terminal = lib.getExe self'.packages.terminal;
     };
   };
 }

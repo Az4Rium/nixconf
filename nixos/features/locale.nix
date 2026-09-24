@@ -1,13 +1,12 @@
 {
-  flake.nixosModule.locale = {
-
+  flake.nixosModules.locale = {...}: {
     time.timeZone = "Europe/Moscow";
 
     # Select internationalisation properties.
     i18n.defaultLocale = "en_US.UTF-8";
     i18n.inputMethod = {
       enable = false;
-    
+
     };
 
     i18n.extraLocaleSettings = {
