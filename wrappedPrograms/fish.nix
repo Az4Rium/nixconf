@@ -8,7 +8,7 @@
     self',
     ...
   }: let
-    #lf = self'.packages.lf;
+    lf = self'.packages.lf;
     fishConf =
       pkgs.writeText "fishy-fishy"
       # fish

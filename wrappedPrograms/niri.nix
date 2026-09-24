@@ -30,7 +30,7 @@
           keyboard = {
             xkb = {
               layout = "us,ru";
-              options = "grp:alt_shift_toggle";
+              options = "grp:alt_shift_toggle,caps:escape";
             };
             repeat-rate = 40;
             repeat-delay = 250;
