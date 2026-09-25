@@ -1,31 +1,34 @@
-# ly.nix
 { self, inputs, lib, ... }: {
-  flake.nixosModules.ly = { config, pkgs, ... }: {
+  flake.nixosModules.ly = { ... }: {
     services.displayManager.ly = {
       enable = true;
+      settings = {
+        bg = "0x00${self.themeNoHash.base00}";
+        fg = "0x00${self.themeNoHash.base06}";
+        error_fg = "0x01${self.themeNoHash.base08}";
+        error_bg = "0x00${self.themeNoHash.base00}";
+        border_fg = "0x00${self.themeNoHash.base07}";
+        animation = "./blackhole-smooth-240x67.dur";
+      };
     };
-
-    # Import your custom animation
-    environment.etc."ly/animations/custom.dur".source = ./blackhole-smooth-240x67.dur;
-
-    # Set the animation in config
-    environment.etc."ly/config.ini".text = ''
-      [general]
-      bg = 0x${self.themeNoHash.base00}
-      fg = 0x${self.themeNoHash.base07}
-      error_fg = 0x${self.themeNoHash.base08}
-      error_bg = 0x${self.themeNoHash.base00}
-      border_fg = 0x${self.themeNoHash.base0A}
-      animation = custom
-      load = true
-      clock = %A %B %d
-    '';
-
-    services.xserver.enable = true;
   };
 
-  perSystem = { pkgs, ... }: {
-    packages.ly = pkgs.ly;
-  };
+#  perSystem = { pkgs, ... }: let
+#    configIni = pkgs.writeText "ly-config.ini" ''
+#      [ly]
+#      bg = 0x00${self.themeNoHash.bg}
+#      fg = 0x00${self.themeNoHash.fg}
+#      error_fg = 0x01${self.themeNoHash.error}
+#      error_bg = 0x00${self.themeNoHash.bg}
+#      border_fg = 0x00${self.themeNoHash.accent}
+#    '';
+#  in {
+#    packages.ly = inputs.wrappers.lib.wrapPackage {
+#      inherit pkgs;
+#      package = pkgs.ly;
+#      flags = {
+#        "-c" = "${configIni}";
+#      };
+#    };
+#  };
 }
-
