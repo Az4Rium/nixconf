@@ -16,7 +16,6 @@
       self.nixosModules.locale
       self.nixosModules.packages
       self.nixosModules.niri
-      self.nixosModules.ly
       self.nixosModules.laptopHardware
     ];
 

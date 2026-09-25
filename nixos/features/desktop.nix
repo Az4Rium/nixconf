@@ -30,6 +30,9 @@
     security.polkit.enable = true;
 
     services.pulseaudio.enable = false;
+    services.displayManager.gdm = {
+      enable = true;
+    };
     security.rtkit.enable = true;
     services.pipewire = {
       enable = true;
