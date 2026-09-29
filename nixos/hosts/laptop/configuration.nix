@@ -32,11 +32,25 @@
     # Use latest kernel.
     boot.kernelPackages = pkgs.linuxPackages_testing;
 
-    networking.hostName = "nixos"; # Define your hostname.
+    #For mt7902 to work properly
+    boot.kernelParams = [ "mt7921e.disable-aspm=Y" ];
     networking.networkmanager.enable = true;
     networking.networkmanager.wifi.powersave = false;
+    hardware.bluetooth = {
+        enable = true; 
+        powerOnBoot = true;
+        settings = {
+            General = {
+                ControllerMode = "dual" ;
+                FastConnectable = "true";
+            };
+        };
+    };
+
 
     services.xserver.enable = true;
+    services.timesyncd.enable = true;
+    networking.hostName = "Alexander_laptop"; # Define your hostname.
 
     # Configure keymap in X11
     services.xserver.xkb = {

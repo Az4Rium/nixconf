@@ -13,6 +13,8 @@
       busybox
       cifs-utils
       prismlauncher
+      obsidian
+      qbittorrent
     ];  
   };
 }
