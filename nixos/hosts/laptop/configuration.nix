@@ -63,7 +63,7 @@
     services.fprintd.enable = true;
     services.power-profiles-daemon.enable = true;
     services.upower.enable = true;
-    services.fwudp.enable = true;
+    services.fwupd.enable = true;
     services.udev.extraRules = ''
         ACTION=="add", SUBSYSTEM=="power_suppy", KERNEL=="BAT0", \
         RUN+="${pkgs.bash}/bin/bash -c 'chown -R root:users /sys/class/power_supply/BAT0/ && chmod -R g+w /sys/class/power_supply/BAT0"
