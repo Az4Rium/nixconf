@@ -17,6 +17,7 @@
       self.nixosModules.packages
       self.nixosModules.niri
       self.nixosModules.laptopHardware
+#      inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14-amd-gen5
     ];
 
     # Bootloader.
@@ -32,25 +33,36 @@
     # Use latest kernel.
     boot.kernelPackages = pkgs.linuxPackages_testing;
 
-    #For mt7902 to work properly
-    boot.kernelParams = [ "mt7921e.disable-aspm=Y" ];
     networking.networkmanager.enable = true;
-    networking.networkmanager.wifi.powersave = false;
-    hardware.bluetooth = {
-        enable = true; 
-        powerOnBoot = true;
-        settings = {
-            General = {
-                ControllerMode = "dual" ;
-                FastConnectable = "true";
-            };
-        };
+    networking.networkmanager.wifi.powersave = true;
+    hardware.bluetooth.enable = true;
+    # hardware.bluetooth = {
+    #     enable = true; 
+    #     powerOnBoot = true;
+    #     # settings = {
+    #     #     General = {
+    #     #         ControllerMode = "dual" ;
+    #     #         FastConnectable = "true";
+    #     #     };
+    #     #};
+    # };
+    hardware.trackpoint = {
+      enable = true; 
+      sensitivity = 100;
+      speed = 70;
     };
 
 
     services.xserver.enable = true;
     services.timesyncd.enable = true;
     networking.hostName = "Alexander_laptop"; # Define your hostname.
+    services.fprintd.enable = true;
+    services.power-profiles-daemon.enable = true;
+    services.upower.enable = true;
+    services.udev.extraRules = ''
+        ACTION=="add", SUBSYSTEM=="power_suppy", KERNEL=="BAT0", \
+        RUN+="${pkgs.bash}/bin/bash -c 'chown -R root:users /sys/class/power_supply/BAT0/ && chmod -R g+w /sys/class/power_supply/BAT0"
+    '';
 
     # Configure keymap in X11
     services.xserver.xkb = {
