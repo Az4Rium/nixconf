@@ -25,17 +25,13 @@
       monospace = [ "JetBrainsMono Nerd Font" ];
     };
 
-    services.upower.enable = true;
 
     security.polkit.enable = true;
 
     services.pulseaudio.enable = false;
     services.greetd = {
       enable = true;
-      settings = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
-        user = "greeter";
-      };
+      useTextGreeter = true;
     };
     security.rtkit.enable = true;
     services.pipewire = {
@@ -57,10 +53,11 @@
       bluetooth.enable = true;
       bluetooth.powerOnBoot = true;
 
-      opengl ={
-        enable = true; 
-        driSupport32Bit = true;
-      };
+      hardware.graphics = {
+        enable = true;
+        enable32Bit = true;
+      }
+
     };
   };
 }
