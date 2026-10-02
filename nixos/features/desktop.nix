@@ -30,8 +30,12 @@
     security.polkit.enable = true;
 
     services.pulseaudio.enable = false;
-    services.displayManager.gdm = {
+    services.greetd = {
       enable = true;
+      settings = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
+        user = "greeter";
+      };
     };
     security.rtkit.enable = true;
     services.pipewire = {
