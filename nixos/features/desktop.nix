@@ -53,10 +53,10 @@
       bluetooth.enable = true;
       bluetooth.powerOnBoot = true;
 
-      hardware.graphics = {
+      graphics = {
         enable = true;
         enable32Bit = true;
-      }
+      };
 
     };
   };
