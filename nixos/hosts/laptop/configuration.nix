@@ -17,7 +17,7 @@
       self.nixosModules.packages
       self.nixosModules.niri
       self.nixosModules.laptopHardware
-#      inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14-amd-gen5
+      inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14-amd-gen5
     ];
 
     # Bootloader.
@@ -32,7 +32,43 @@
     boot.loader.efi.canTouchEfiVariables = false;
     # Use latest kernel.
     boot.kernelPackages = pkgs.linuxPackages_testing;
+#     boot.extraModprobeConfig = ''
+#       options ath11k_pci disable_idle_ps=1
+#     '';
 
+  # 1. Essential firmware configuration for ThinkPad hardware coexistence
+  hardware.enableRedistributableFirmware = true;
+
+  # 2. Adjust kernel parameters to keep the AMD PCIe/USB link awake 
+  boot.kernelParams = [ "pcie_aspm=force" ];
+
+  # 3. Dedicated systemd services for the T14 Gen 5 Qualcomm card
+  systemd.services.ath11k-hibernate = {
+    description = "Disconnect ath11k interface safely before hibernation";
+    before = [ "systemd-suspend.service" "systemd-hibernate.service" "suspend.target" "hibernate.target" ];
+    wantedBy = [ "systemd-suspend.service" "systemd-hibernate.service" "suspend.target" "hibernate.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      # Unload ONLY the top-level driver wrapper, leaving MHI and USB subsystems fully powered
+      ExecStart = "${pkgs.kmod}/bin/modprobe -r ath11k_pci"; 
+      TimeoutSec = "10s";
+    };
+  };
+
+  systemd.services.ath11k-resume = {
+    description = "Reinitialize ath11k and synchronize USB Bluetooth upon wake";
+    after = [ "systemd-suspend.service" "systemd-hibernate.service" "suspend.target" "hibernate.target" ];
+    wantedBy = [ "systemd-suspend.service" "systemd-hibernate.service" "suspend.target" "hibernate.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      # Reload the Wi-Fi driver, then cycle the USB Bluetooth driver to re-establish coexistence
+      ExecStart = ''
+        ${pkgs.kmod}/bin/modprobe ath11k_pci
+        ${pkgs.kmod}/bin/modprobe -r btusb
+        ${pkgs.kmod}/bin/modprobe btusb
+      '';
+    };
+  };
     networking.networkmanager.enable = true;
     networking.networkmanager.wifi.powersave = true;
     hardware.bluetooth.enable = true;
@@ -61,16 +97,14 @@
     services.timesyncd.enable = true;
     networking.hostName = "Alexander_laptop"; # Define your hostname.
     services.fprintd.enable = true;
-    services.power-profiles-daemon.enable = true;
-    services.fwupd.enable = true;
+    services.power-profiles-daemon = {
+        enable = true;
+    };
+    #services.fwupd.enable = true;
     services.upower.enable = true;
     services.udev.extraRules = ''
         ACTION=="add", SUBSYSTEM=="power_suppy", KERNEL=="BAT0", \
         RUN+="${pkgs.bash}/bin/bash -c 'chown -R root:users /sys/class/power_supply/BAT0/ && chmod -R g+w /sys/class/power_supply/BAT0"
-    '';
-    powerManagement.resumeCommands = ''
-      modprobe -r ath11k_pci || true 
-      modprobe ath11k_pci || true 
     '';
 
     # Configure keymap in X11

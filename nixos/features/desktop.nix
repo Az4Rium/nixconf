@@ -1,4 +1,4 @@
-{self, ...}: {
+{lib, self, config, ...}: {
   flake.nixosModules.desktop = {pkgs, ...}: let 
     selfpkgs = self.packages."${pkgs.system}";
   in {
@@ -32,6 +32,14 @@
     services.greetd = {
       enable = true;
       useTextGreeter = true;
+      settings = {
+        default_session = {
+          command = let 
+          #niriSession = lib.getExe' config.programs.niri.package "niri-session";
+          in "${pkgs.tuigreet}/bin/tuigreet --time --remember --asterisks --user-menu --background matrix --remember-user-session ";
+        };
+      }
+      ;
     };
     security.rtkit.enable = true;
     services.pipewire = {
